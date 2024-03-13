@@ -4,7 +4,7 @@
 # <h1>Table of Contents<span class="tocSkip"></span></h1>
 # <div class="toc"><ul class="toc-item"></ul></div>
 
-# In[13]:
+# In[14]:
 
 
 import streamlit as st
@@ -105,7 +105,7 @@ if response.status_code == 200:
     data = loader.load()
 
     # Generate document vectors
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(api_key=api_key)
     vectors = FAISS.from_documents(data, embeddings)
 
     # Initialize OpenAI client

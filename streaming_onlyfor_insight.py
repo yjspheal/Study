@@ -4,19 +4,11 @@
 # <h1>Table of Contents<span class="tocSkip"></span></h1>
 # <div class="toc"><ul class="toc-item"></ul></div>
 
-# In[4]:
-
-
-import os
-
-# gpt for insight 사용
-os.environ['OPENAI_API_KEY'] = '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'
-
-
-# In[5]:
+# In[10]:
 
 
 import streamlit as st
+
 from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.document_loaders import PyPDFLoader
 from langchain.embeddings import OpenAIEmbeddings
@@ -37,6 +29,7 @@ import tempfile
 from PIL import Image
 from io import BytesIO
 
+api_key = st.secrets["default"]["api_key"]
 
 class StreamHandler(BaseCallbackHandler):
     def __init__(self, container, initial_text="", display_method='markdown'):
@@ -112,11 +105,11 @@ if response.status_code == 200:
     data = loader.load()
 
     # Generate document vectors
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(api_key=api_key)
     vectors = FAISS.from_documents(data, embeddings)
 
     # Initialize OpenAI client
-    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+    client = OpenAI(api_key=api_key)
     
     
     st.chat_message("user").write('안녕!')
@@ -157,4 +150,10 @@ if response.status_code == 200:
                 # 어시스턴트 메시지 저장
                 st.session_state['messages'].append(("assistant", stream_handler.complete_response))
    
+
+
+# In[ ]:
+
+
+
 

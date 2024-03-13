@@ -4,16 +4,16 @@
 # <h1>Table of Contents<span class="tocSkip"></span></h1>
 # <div class="toc"><ul class="toc-item"></ul></div>
 
-# In[2]:
+# In[4]:
 
 
 import os
 
 # gpt for insight 사용
-os.environ['OPENAI_API_KEY'] = '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'
+os.environ['OPENAI_API_KEY'] = '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'
 
 
-# In[3]:
+# In[5]:
 
 
 import streamlit as st
@@ -157,10 +157,4 @@ if response.status_code == 200:
                 # 어시스턴트 메시지 저장
                 st.session_state['messages'].append(("assistant", stream_handler.complete_response))
    
-
-
-# In[ ]:
-
-
-
 

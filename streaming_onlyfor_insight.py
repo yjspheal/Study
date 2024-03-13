@@ -4,7 +4,7 @@
 # <h1>Table of Contents<span class="tocSkip"></span></h1>
 # <div class="toc"><ul class="toc-item"></ul></div>
 
-# In[10]:
+# In[13]:
 
 
 import streamlit as st
@@ -105,7 +105,7 @@ if response.status_code == 200:
     data = loader.load()
 
     # Generate document vectors
-    embeddings = OpenAIEmbeddings(api_key=api_key)
+    embeddings = OpenAIEmbeddings()
     vectors = FAISS.from_documents(data, embeddings)
 
     # Initialize OpenAI client
@@ -136,7 +136,8 @@ if response.status_code == 200:
                 streaming=True,
                 callbacks=[stream_handler],
                 temperature=0.0,
-                model_name='gpt-4-0125-preview'),
+                model_name='gpt-4-0125-preview',
+                openai_api_key=api_key),
                 retriever=vectors.as_retriever())
 
             qa(prompt)

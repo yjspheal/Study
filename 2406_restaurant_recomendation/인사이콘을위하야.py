@@ -324,7 +324,7 @@ if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
             # 영업시간
             with col2:
                 if not pd.isna(rec['business_hours']):
-                    with st.expander(f"영업시간 - {rec['restaurant_name']}"):
+                    with st.expander(f"영업시간"):
                         business_hours = rec['business_hours']
 
                         # business_hours가 float 타입일 경우 빈 문자열로 처리
@@ -400,7 +400,7 @@ if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
 
            # 메뉴판 보기
             with col3:
-                with st.expander(f"메뉴판 보기 - {rec['restaurant_name']}"):
+                with st.expander(f"메뉴판 보기"):
                     menu_items = ast.literal_eval(rec['menu_info'])
                     for item in menu_items:
                         if " 대표 " in item:

@@ -16,14 +16,19 @@ import pandas as pd
 import requests
 import io
 
-# 초기 데이터프레임 불러오기 (이 부분은 이미 정의된 rests 데이터프레임을 사용합니다)
-rests = pd.read_csv('final_df_0327.csv')
+# 개별 파일 불러오기
+df1 = pd.read_csv('final_df_0327_part1.csv')
+df2 = pd.read_csv('final_df_0327_part2.csv')
+df3 = pd.read_csv('final_df_0327_part3.csv')
 
-rests = rests.drop_duplicates(subset=['restaurant_name', 'second_count_review', 'distance'])
+# 데이터프레임 결합
+df = pd.concat([df1, df2, df3])
+
+# 중복 제거
+rests = df.drop_duplicates(subset=['restaurant_name', 'second_count_review', 'distance'])
 
 # OpenAI API 키 설정
 client = OpenAI(api_key = st.secrets["default"]["api_key"])
-# client = OpenAI(api_key = 'sk-proj-doAi0Edc8SROYqio3JHkT3BlbkFJzkMmvPPT3i2LPKOGy4iR')
 
 # 상단 제목
 st.title("UNMAGO")

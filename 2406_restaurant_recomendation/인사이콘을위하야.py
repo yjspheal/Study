@@ -135,7 +135,7 @@ html_code1 = f"""
 """
 
 # HTML 코드 표시
-st.markdown(html_code1, unsafe_allow_html=True)
+# st.markdown(html_code1, unsafe_allow_html=True)
 
 
 st.write("")
@@ -158,7 +158,7 @@ html_code4 = f"""
 """
 
 # HTML 코드 표시
-st.markdown(html_code4, unsafe_allow_html=True)
+# st.markdown(html_code4, unsafe_allow_html=True)
 
 st.write("")
 
@@ -182,7 +182,7 @@ html_code2 = f"""
 """
 
 # HTML 코드 표시
-st.markdown(html_code2, unsafe_allow_html=True)
+# st.markdown(html_code2, unsafe_allow_html=True)
 
 
 st.write("")
@@ -206,7 +206,22 @@ html_code3 = f"""
 """
 
 # HTML 코드 표시
-st.markdown(html_code3, unsafe_allow_html=True)
+# st.markdown(html_code3, unsafe_allow_html=True)
+
+# 필터링된 데이터의 길이에 따른 메시지를 설정합니다.
+if len(st.session_state.filtered_data) == 0:
+    message = "현재 조건에 맞는 가게가 존재하지 않습니다. 더 넓은 조건을 사용해주세요."
+
+    # 빨간색 배경 박스를 생성하는 HTML 코드입니다.
+    html_code = f"""
+    <div style="background-color: #ff4c4c; padding: 10px; border-radius: 5px; position: -webkit-sticky; position: sticky; top: 0; z-index: 1000;">
+        <p style="font-size: 14px; font-weight: normal; margin: 0; color: white;">{message}</p>
+    </div>
+    """
+    
+    # HTML 코드 표시
+    st.markdown(html_code, unsafe_allow_html=True)
+    
 
 st.write("")
 # 좋아하는 특징 적기

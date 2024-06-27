@@ -359,13 +359,13 @@ if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
             if not pd.isna(rec['business_hours']):
                 with st.expander(f"영업시간"):
                     business_hours = rec['business_hours']
-
+        
                     # business_hours가 float 타입일 경우 빈 문자열로 처리
                     if isinstance(business_hours, float):
                         business_hours = ""
-
+        
                     business_hours = business_hours.replace('접기', '').strip()
-
+        
                     # '영업 종료', '영업 전', '영업 중', '영업 시작'으로 시작하는 경우
                     if any(business_hours.startswith(keyword) for keyword in ['영업 종료', '영업 전', '영업 중', '영업 시작']):
                         # '분에 브레이크타임', '분에 영업 시작', '분에 라스트오더', '분에 영업 종료' 위치 찾기
@@ -373,7 +373,7 @@ if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
                         end_time_idx = business_hours.find('분에 영업 종료')
                         start_time_idx = business_hours.find('분에 영업 시작')
                         last_order_idx = business_hours.find('분에 라스트오더')
-
+        
                         # 유효한 위치 중 가장 작은 값을 찾음
                         if break_time_idx != -1:
                             business_hours = business_hours[break_time_idx + len('분에 브레이크타임'):].strip()
@@ -386,24 +386,24 @@ if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
                         else:
                             # 유효한 인덱스가 없는 경우 '영업 종료', '영업 전', '영업 중', '영업 시작' 제거
                             business_hours = business_hours.replace('영업 종료', '').replace('영업 전', '').replace('영업 중', '').replace('영업 시작', '').strip()
-
+        
                     # 요일별로 각 줄에 하나씩 출력
                     days = ['월', '화', '수', '목', '금', '토', '일']
                     hours_by_day = {day: '' for day in days}
                     processed_days = set()  # 이미 처리된 요일을 저장할 집합
-
+        
                     found_day = False
                     for day in days:
                         if day in business_hours and day not in processed_days:
                             start_idx = business_hours.find(day)
-
+        
                             if day == '일':
                                 # '일'인 경우, '일요일'이나 '매일'을 피하기 위해 추가 검사를 수행
                                 while start_idx != -1:
                                     if start_idx == 0 or (business_hours[start_idx - 1] != '요' and business_hours[start_idx - 1] != '매'):
                                         break
                                     start_idx = business_hours.find(day, start_idx + 1)
-
+        
                             if start_idx != -1:
                                 next_day_idx = len(business_hours)
                                 for next_day in days:
@@ -419,7 +419,12 @@ if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
                                 hours_by_day[day] = business_hours[start_idx:next_day_idx].strip()
                                 processed_days.add(day)
                                 found_day = True
-
+        
+                    # 마지막에 불필요한 정보 제거
+                    last_day_idx = max(business_hours.rfind(day) for day in days if day in business_hours)
+                    if last_day_idx != -1:
+                        business_hours = business_hours[:last_day_idx].strip()
+        
                     if found_day:
                         for day in days:
                             if hours_by_day[day]:

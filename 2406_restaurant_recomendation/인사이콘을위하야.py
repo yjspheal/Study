@@ -416,14 +416,11 @@ if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
                                             idx = business_hours.find(next_day, idx + 1)
                                         if idx != -1:
                                             next_day_idx = min(next_day_idx, idx)
-                                hours_by_day[day] = business_hours[start_idx:next_day_idx].strip()
+                                day_hours = business_hours[start_idx:next_day_idx].strip()
+                                hours_by_day[day] = day_hours
+                                business_hours = business_hours.replace(day_hours, "").strip()
                                 processed_days.add(day)
                                 found_day = True
-        
-                    # 마지막에 불필요한 정보 제거
-                    last_day_idx = max(business_hours.rfind(day) for day in days if day in business_hours)
-                    if last_day_idx != -1:
-                        business_hours = business_hours[:last_day_idx].strip()
         
                     if found_day:
                         for day in days:
@@ -431,6 +428,7 @@ if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
                                 st.write(hours_by_day[day])
                     else:
                         st.write(business_hours)
+
 
 
 
@@ -449,8 +447,7 @@ if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
                 image = load_image(rec['menu_img'])
                 if image:
                     st.image(image, caption="메뉴판", use_column_width=True)
-else:
-    st.write("추천을 받기 위해 좋아하는 음식점의 특징을 입력해주세요.")
+
 
 
 # In[ ]:

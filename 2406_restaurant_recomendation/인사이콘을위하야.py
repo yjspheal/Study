@@ -280,9 +280,6 @@ def load_image(url):
 
 # 추천 실행 버튼
 if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
-    if not user_input:
-        user_input = st.text_input('(필수로 적어주셔야 합니다)좋아하는 음식점의 특징을 자유롭게 적어주세요. ex)매장이 깨끗함, 메뉴가 다양함', key="user_input2")
-
     # 필터링된 데이터의 길이에 따른 메시지를 설정합니다.
     if len(st.session_state.filtered_data) == 0:
         message = "조건에 맞는 데이터가 없으므로 추천을 해드릴 수 없습니다. 페이지를 reload합니다."
@@ -294,8 +291,11 @@ if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
         """
         st.markdown(html_code, unsafe_allow_html=True)
         
-        # 페이지를 재로드하는 자바스크립트 코드를 실행합니다.
-        st.write('<script>location.reload()</script>', unsafe_allow_html=True)
+        # 페이지를 재로드하는 코드
+        st.experimental_rerun()
+
+    if not user_input:
+        user_input = st.text_input('(필수로 적어주셔야 합니다)좋아하는 음식점의 특징을 자유롭게 적어주세요. ex)매장이 깨끗함, 메뉴가 다양함', key="user_input2")
 
 
 

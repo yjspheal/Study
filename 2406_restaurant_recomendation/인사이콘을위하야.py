@@ -280,154 +280,172 @@ def load_image(url):
 
 # 추천 실행 버튼
 if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
-    if user_input:
-        st.write('입력해주신 내용을 바탕으로 추천을 진행합니다...')
-        # '임베딩결과값' 열이 있는지 확인
-        if '임베딩결과값' not in st.session_state.filtered_data.columns:
-            st.session_state.filtered_data['임베딩결과값'] = st.session_state.filtered_data['restaurant_name'].apply(lambda x: get_text_embedding(x))
+    if not user_input:
+        user_input = st.text_input('(필수로 적어주셔야 합니다)좋아하는 음식점의 특징을 자유롭게 적어주세요. ex)매장이 깨끗함, 메뉴가 다양함', key="user_input")
 
-        # 임베딩 결과값이 문자열로 저장된 경우 변환
-        st.session_state.filtered_data['임베딩결과값'] = st.session_state.filtered_data['임베딩결과값'].apply(
-            lambda x: np.array(ast.literal_eval(x)) if isinstance(x, str) else x)
+    # 필터링된 데이터의 길이에 따른 메시지를 설정합니다.
+    if len(st.session_state.filtered_data) == 0:
+        message = "조건에 맞는 데이터가 없으므로 추천을 해드릴 수 없습니다. 페이지를 reload합니다."
+        # HTML 코드를 사용하여 메시지를 표시합니다.
+        html_code = f"""
+        <div style="background-color: #ff4c4c; padding: 10px; border-radius: 5px; position: -webkit-sticky; position: sticky; top: 0; z-index: 1000;">
+            <p style="font-size: 14px; font-weight: normal; margin: 0; color: white;">{message}</p>
+        </div>
+        """
+        st.markdown(html_code, unsafe_allow_html=True)
+        
+        # 페이지를 재로드하는 자바스크립트 코드를 실행합니다.
+        st.write('<script>location.reload()</script>', unsafe_allow_html=True)
 
-        recommendation = recommend_documents(user_input, st.session_state.filtered_data)
 
-        # 추천 결과 출력
-        st.write("### 추천 음식점")
-        top_n = min(3, len(recommendation))
-        for i, rec in enumerate(recommendation[:top_n], 1):
-            with st.expander(f"{rec['restaurant_name']} ({rec['new_category']})"):
-                # 리뷰 요약 부분 처리
-                review_summarized = rec['review_summarized']
 
-                # 1., 2., 3.으로 나누기
-                positive_review = ""
-                negative_review = ""
-                overall_review = ""
+    st.write('입력해주신 내용을 바탕으로 추천을 진행합니다...')
+    # '임베딩결과값' 열이 있는지 확인
+    if '임베딩결과값' not in st.session_state.filtered_data.columns:
+        st.session_state.filtered_data['임베딩결과값'] = st.session_state.filtered_data['restaurant_name'].apply(lambda x: get_text_embedding(x))
 
-                # 1. 부터 2. 까지 긍정 부분, 2. 부터 3. 까지 부정 부분, 3. 이후 전체 요약 부분 추출
-                if "1." in review_summarized:
-                    positive_part = review_summarized.split("1.")[1]
-                    if "2." in positive_part:
-                        positive_review = positive_part.split("2.")[0].split(":", 1)[1].strip() if ":" in positive_part.split("2.")[0] else positive_part.split("2.")[0].strip()
-                        negative_part = positive_part.split("2.")[1]
-                        if "3." in negative_part:
-                            negative_review = negative_part.split("3.")[0].split(":", 1)[1].strip() if ":" in negative_part.split("3.")[0] else negative_part.split("3.")[0].strip()
-                            overall_part = negative_part.split("3.")[1]
-                            overall_review = overall_part.split(":", 1)[1].strip() if ":" in overall_part else overall_part.strip()
-                        else:
-                            negative_review = negative_part.split(":", 1)[1].strip() if ":" in negative_part else negative_part.strip()
+    # 임베딩 결과값이 문자열로 저장된 경우 변환
+    st.session_state.filtered_data['임베딩결과값'] = st.session_state.filtered_data['임베딩결과값'].apply(
+        lambda x: np.array(ast.literal_eval(x)) if isinstance(x, str) else x)
+
+    recommendation = recommend_documents(user_input, st.session_state.filtered_data)
+
+    # 추천 결과 출력
+    st.write("### 추천 음식점")
+    top_n = min(3, len(recommendation))
+    for i, rec in enumerate(recommendation[:top_n], 1):
+        with st.expander(f"{rec['restaurant_name']} ({rec['new_category']})"):
+            # 리뷰 요약 부분 처리
+            review_summarized = rec['review_summarized']
+
+            # 1., 2., 3.으로 나누기
+            positive_review = ""
+            negative_review = ""
+            overall_review = ""
+
+            # 1. 부터 2. 까지 긍정 부분, 2. 부터 3. 까지 부정 부분, 3. 이후 전체 요약 부분 추출
+            if "1." in review_summarized:
+                positive_part = review_summarized.split("1.")[1]
+                if "2." in positive_part:
+                    positive_review = positive_part.split("2.")[0].split(":", 1)[1].strip() if ":" in positive_part.split("2.")[0] else positive_part.split("2.")[0].strip()
+                    negative_part = positive_part.split("2.")[1]
+                    if "3." in negative_part:
+                        negative_review = negative_part.split("3.")[0].split(":", 1)[1].strip() if ":" in negative_part.split("3.")[0] else negative_part.split("3.")[0].strip()
+                        overall_part = negative_part.split("3.")[1]
+                        overall_review = overall_part.split(":", 1)[1].strip() if ":" in overall_part else overall_part.strip()
                     else:
-                        positive_review = positive_part.split(":", 1)[1].strip() if ":" in positive_part else positive_part.strip()
+                        negative_review = negative_part.split(":", 1)[1].strip() if ":" in negative_part else negative_part.strip()
+                else:
+                    positive_review = positive_part.split(":", 1)[1].strip() if ":" in positive_part else positive_part.strip()
 
-                st.write(f"1. 긍정부분 요약:\n{positive_review}")
-                st.write(f"2. 부정부분 요약:\n{negative_review}")
-                st.write(f"3. 전체 요약:\n{overall_review}")
+            st.write(f"1. 긍정부분 요약:\n{positive_review}")
+            st.write(f"2. 부정부분 요약:\n{negative_review}")
+            st.write(f"3. 전체 요약:\n{overall_review}")
 
-                st.write(f"전화번호:\n{rec['phone_number']}")
-                st.write(f"{rec['station']}에서 {rec['meter']}m 거리에 있음")
+            st.write(f"전화번호:\n{rec['phone_number']}")
+            st.write(f"{rec['station']}에서 {rec['meter']}m 거리에 있음")
 
-            # 3개의 열을 생성
-            col1, col2, col3 = st.columns(3)
+        # 3개의 열을 생성
+        col1, col2, col3 = st.columns(3)
 
-            # 사장님의 한마디
-            with col1:
-                if not pd.isna(rec['info']):
-                    with st.expander("사장님의 한마디"):
-                        st.write(f"{rec['info']}")
+        # 사장님의 한마디
+        with col1:
+            if not pd.isna(rec['info']):
+                with st.expander("사장님의 한마디"):
+                    st.write(f"{rec['info']}")
 
-            # 영업시간
-            with col2:
-                if not pd.isna(rec['business_hours']):
-                    with st.expander(f"영업시간"):
-                        business_hours = rec['business_hours']
+        # 영업시간
+        with col2:
+            if not pd.isna(rec['business_hours']):
+                with st.expander(f"영업시간"):
+                    business_hours = rec['business_hours']
 
-                        # business_hours가 float 타입일 경우 빈 문자열로 처리
-                        if isinstance(business_hours, float):
-                            business_hours = ""
+                    # business_hours가 float 타입일 경우 빈 문자열로 처리
+                    if isinstance(business_hours, float):
+                        business_hours = ""
 
-                        business_hours = business_hours.replace('접기', '').strip()
+                    business_hours = business_hours.replace('접기', '').strip()
 
-                        # '영업 종료', '영업 전', '영업 중', '영업 시작'으로 시작하는 경우
-                        if any(business_hours.startswith(keyword) for keyword in ['영업 종료', '영업 전', '영업 중', '영업 시작']):
-                            # '분에 브레이크타임', '분에 영업 시작', '분에 라스트오더', '분에 영업 종료' 위치 찾기
-                            break_time_idx = business_hours.find('분에 브레이크타임')
-                            end_time_idx = business_hours.find('분에 영업 종료')
-                            start_time_idx = business_hours.find('분에 영업 시작')
-                            last_order_idx = business_hours.find('분에 라스트오더')
+                    # '영업 종료', '영업 전', '영업 중', '영업 시작'으로 시작하는 경우
+                    if any(business_hours.startswith(keyword) for keyword in ['영업 종료', '영업 전', '영업 중', '영업 시작']):
+                        # '분에 브레이크타임', '분에 영업 시작', '분에 라스트오더', '분에 영업 종료' 위치 찾기
+                        break_time_idx = business_hours.find('분에 브레이크타임')
+                        end_time_idx = business_hours.find('분에 영업 종료')
+                        start_time_idx = business_hours.find('분에 영업 시작')
+                        last_order_idx = business_hours.find('분에 라스트오더')
 
-                            # 유효한 위치 중 가장 작은 값을 찾음
-                            if break_time_idx != -1:
-                                business_hours = business_hours[break_time_idx + len('분에 브레이크타임'):].strip()
-                            elif start_time_idx != -1:
-                                business_hours = business_hours[start_time_idx + len('분에 영업 시작'):].strip()
-                            elif last_order_idx != -1:
-                                business_hours = business_hours[last_order_idx + len('분에 라스트오더'):].strip()
-                            elif end_time_idx != -1:
-                                business_hours = business_hours[end_time_idx + len('분에 영업 종료'):].strip()
-                            else:
-                                # 유효한 인덱스가 없는 경우 '영업 종료', '영업 전', '영업 중', '영업 시작' 제거
-                                business_hours = business_hours.replace('영업 종료', '').replace('영업 전', '').replace('영업 중', '').replace('영업 시작', '').strip()
+                        # 유효한 위치 중 가장 작은 값을 찾음
+                        if break_time_idx != -1:
+                            business_hours = business_hours[break_time_idx + len('분에 브레이크타임'):].strip()
+                        elif start_time_idx != -1:
+                            business_hours = business_hours[start_time_idx + len('분에 영업 시작'):].strip()
+                        elif last_order_idx != -1:
+                            business_hours = business_hours[last_order_idx + len('분에 라스트오더'):].strip()
+                        elif end_time_idx != -1:
+                            business_hours = business_hours[end_time_idx + len('분에 영업 종료'):].strip()
+                        else:
+                            # 유효한 인덱스가 없는 경우 '영업 종료', '영업 전', '영업 중', '영업 시작' 제거
+                            business_hours = business_hours.replace('영업 종료', '').replace('영업 전', '').replace('영업 중', '').replace('영업 시작', '').strip()
 
-                        # 요일별로 각 줄에 하나씩 출력
-                        days = ['월', '화', '수', '목', '금', '토', '일']
-                        hours_by_day = {day: '' for day in days}
-                        processed_days = set()  # 이미 처리된 요일을 저장할 집합
+                    # 요일별로 각 줄에 하나씩 출력
+                    days = ['월', '화', '수', '목', '금', '토', '일']
+                    hours_by_day = {day: '' for day in days}
+                    processed_days = set()  # 이미 처리된 요일을 저장할 집합
 
-                        found_day = False
+                    found_day = False
+                    for day in days:
+                        if day in business_hours and day not in processed_days:
+                            start_idx = business_hours.find(day)
+
+                            if day == '일':
+                                # '일'인 경우, '일요일'이나 '매일'을 피하기 위해 추가 검사를 수행
+                                while start_idx != -1:
+                                    if start_idx == 0 or (business_hours[start_idx - 1] != '요' and business_hours[start_idx - 1] != '매'):
+                                        break
+                                    start_idx = business_hours.find(day, start_idx + 1)
+
+                            if start_idx != -1:
+                                next_day_idx = len(business_hours)
+                                for next_day in days:
+                                    if next_day != day and next_day not in processed_days:
+                                        idx = business_hours.find(next_day, start_idx + len(day))
+                                        # next_day가 '일'인 경우, 앞에 '요'나 '매'가 오지 않는지 확인
+                                        while next_day == '일' and idx != -1:
+                                            if idx == 0 or (business_hours[idx - 1] != '요' and business_hours[idx - 1] != '매'):
+                                                break
+                                            idx = business_hours.find(next_day, idx + 1)
+                                        if idx != -1:
+                                            next_day_idx = min(next_day_idx, idx)
+                                hours_by_day[day] = business_hours[start_idx:next_day_idx].strip()
+                                processed_days.add(day)
+                                found_day = True
+
+                    if found_day:
                         for day in days:
-                            if day in business_hours and day not in processed_days:
-                                start_idx = business_hours.find(day)
-
-                                if day == '일':
-                                    # '일'인 경우, '일요일'이나 '매일'을 피하기 위해 추가 검사를 수행
-                                    while start_idx != -1:
-                                        if start_idx == 0 or (business_hours[start_idx - 1] != '요' and business_hours[start_idx - 1] != '매'):
-                                            break
-                                        start_idx = business_hours.find(day, start_idx + 1)
-
-                                if start_idx != -1:
-                                    next_day_idx = len(business_hours)
-                                    for next_day in days:
-                                        if next_day != day and next_day not in processed_days:
-                                            idx = business_hours.find(next_day, start_idx + len(day))
-                                            # next_day가 '일'인 경우, 앞에 '요'나 '매'가 오지 않는지 확인
-                                            while next_day == '일' and idx != -1:
-                                                if idx == 0 or (business_hours[idx - 1] != '요' and business_hours[idx - 1] != '매'):
-                                                    break
-                                                idx = business_hours.find(next_day, idx + 1)
-                                            if idx != -1:
-                                                next_day_idx = min(next_day_idx, idx)
-                                    hours_by_day[day] = business_hours[start_idx:next_day_idx].strip()
-                                    processed_days.add(day)
-                                    found_day = True
-
-                        if found_day:
-                            for day in days:
-                                if hours_by_day[day]:
-                                    st.write(hours_by_day[day])
-                        else:
-                            st.write(business_hours)
+                            if hours_by_day[day]:
+                                st.write(hours_by_day[day])
+                    else:
+                        st.write(business_hours)
 
 
 
 
 
-           # 메뉴판 보기
-            with col3:
-                with st.expander(f"메뉴판 보기"):
-                    menu_items = ast.literal_eval(rec['menu_info'])
-                    for item in menu_items:
-                        if " 대표 " in item:
-                            item = item.replace(" 대표 ", " ")
-                            st.write(f"[대표] {item}")
-                        else:
-                            st.write(item)
-                    image = load_image(rec['menu_img'])
-                    if image:
-                        st.image(image, caption="메뉴판", use_column_width=True)
-    else:
-        st.write("추천을 받기 위해 좋아하는 음식점의 특징을 입력해주세요.")
+       # 메뉴판 보기
+        with col3:
+            with st.expander(f"메뉴판 보기"):
+                menu_items = ast.literal_eval(rec['menu_info'])
+                for item in menu_items:
+                    if " 대표 " in item:
+                        item = item.replace(" 대표 ", " ")
+                        st.write(f"[대표] {item}")
+                    else:
+                        st.write(item)
+                image = load_image(rec['menu_img'])
+                if image:
+                    st.image(image, caption="메뉴판", use_column_width=True)
+else:
+    st.write("추천을 받기 위해 좋아하는 음식점의 특징을 입력해주세요.")
 
 
 # In[ ]:

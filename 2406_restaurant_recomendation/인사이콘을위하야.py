@@ -281,7 +281,7 @@ def load_image(url):
 # 추천 실행 버튼
 if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
     if not user_input:
-        user_input = st.text_input('(필수로 적어주셔야 합니다)좋아하는 음식점의 특징을 자유롭게 적어주세요. ex)매장이 깨끗함, 메뉴가 다양함', key="user_input")
+        user_input = st.text_input('(필수로 적어주셔야 합니다)좋아하는 음식점의 특징을 자유롭게 적어주세요. ex)매장이 깨끗함, 메뉴가 다양함', key="user_input2")
 
     # 필터링된 데이터의 길이에 따른 메시지를 설정합니다.
     if len(st.session_state.filtered_data) == 0:

@@ -48,7 +48,7 @@ st.session_state.filtered_data = st.session_state.initial_data.copy()
 
 # 상황 선택
 st.write("### 1. 무슨 상황인가요?")
-situations = ["혼밥", '데이트 및 소개팅', '밥약', "회식", "카공", "맛집탐방"]
+situations = ["혼밥", '데이트 및 소개팅',  "회식", "카공", "맛집탐방"]
 situation_choice = st.radio("TPO를 선택해 주세요", situations, key="situation_choice")
 
 st.write(f"선택한 상황: {situation_choice}")

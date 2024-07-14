@@ -48,7 +48,7 @@ st.session_state.filtered_data = st.session_state.initial_data.copy()
 
 # 상황 선택
 st.write("### 1. 무슨 상황인가요?")
-situations = ["혼밥", '데이트 및 소개팅', '밥약', "회식", "카공", "맛집탐방"]
+situations = ["혼밥", '데이트 및 소개팅', "회식", "카공", "맛집탐방"]
 situation_choice = st.radio("TPO를 선택해 주세요", situations, key="situation_choice")
 
 st.write(f"선택한 상황: {situation_choice}")
@@ -106,16 +106,16 @@ if situation_choice:
         date = date.drop_duplicates()
         st.session_state.filtered_data = date[date['restaurant_name'].isin(conversation['restaurant_name'])]
             
-    elif situation_choice == '밥약':
-        buck = df[df['가성비가 좋아요'] > 80]
-        conversation = df[df['대화하기 좋아요'] > 60]
-        fast = df[df['음식이 빨리 나와요'] > 60]
-        babak = pd.concat([buck, conversation, fast])
-        babak = babak.drop_duplicates()
+    # elif situation_choice == '밥약':
+    #     buck = df[df['가성비가 좋아요'] > 80]
+    #     conversation = df[df['대화하기 좋아요'] > 60]
+    #     fast = df[df['음식이 빨리 나와요'] > 60]
+    #     babak = pd.concat([buck, conversation, fast])
+    #     babak = babak.drop_duplicates()
         
-        filtered_data = babak[(babak['new_category'].isin(['커피/차', '디저트']) == False) & (babak['restaurant_name'].isin(conversation['restaurant_name']))]
+    #     filtered_data = babak[(babak['new_category'].isin(['커피/차', '디저트']) == False) & (babak['restaurant_name'].isin(conversation['restaurant_name']))]
 
-        st.session_state.filtered_data = filtered_data
+    #     st.session_state.filtered_data = filtered_data
             
     elif situation_choice == '맛집탐방':
         mat = df[df['음식이 맛있어요'] > 50]
@@ -428,9 +428,6 @@ if st.button("선택 완료(추천 받기 시작)", key="recommend_button"):
                                 st.write(hours_by_day[day])
                     else:
                         st.write(business_hours)
-
-
-
 
 
 

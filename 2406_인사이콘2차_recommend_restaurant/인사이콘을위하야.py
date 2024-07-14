@@ -17,9 +17,9 @@ import requests
 import io
 
 # 개별 파일 불러오기
-df1 = pd.read_csv('2406_restaurant_recomendation/final_df_0327_part1.csv')
-df2 = pd.read_csv('2406_restaurant_recomendation/final_df_0327_part2.csv')
-df3 = pd.read_csv('2406_restaurant_recomendation/final_df_0327_part3.csv')
+df1 = pd.read_csv('2406_인사이콘2차_recommend_restaurant/final_df_0327_part1.csv')
+df2 = pd.read_csv('2406_인사이콘2차_recommend_restaurant/final_df_0327_part2.csv')
+df3 = pd.read_csv('2406_인사이콘2차_recommend_restaurant/final_df_0327_part3.csv')
 
 # 데이터프레임 결합
 df = pd.concat([df1, df2, df3])

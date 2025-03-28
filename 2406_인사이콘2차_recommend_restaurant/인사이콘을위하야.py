@@ -21,8 +21,6 @@ df1 = pd.read_csv('2406_인사이콘2차_recommend_restaurant/final_df_0327_part
 df2 = pd.read_csv('2406_인사이콘2차_recommend_restaurant/final_df_0327_part2.csv')
 df3 = pd.read_csv('2406_인사이콘2차_recommend_restaurant/final_df_0327_part3.csv')
 
-# 데이터프레임 결합
-df = pd.concat([df1, df2, df3])
 
 # 중복 제거
 rests = df.drop_duplicates(subset=['restaurant_name', 'second_count_review', 'distance'])
@@ -31,7 +29,7 @@ rests = df.drop_duplicates(subset=['restaurant_name', 'second_count_review', 'di
 client = OpenAI(api_key = st.secrets["default"]["api_key"])
 
 # 상단 제목
-st.title("UNMAGO")
+st.title("TPO별음식추천서비스")
 
 # 데이터프레임 초기화
 if 'initial_data' not in st.session_state:
@@ -165,7 +163,7 @@ st.write("")
 # 서비스 선택
 st.write("### 3. 원하는 서비스가 있으신가요?")
 df = st.session_state.filtered_data
-services = ["주차 가능 여부", "포장 가능 여부", "장애인 시설 유무", "무한 리필", "단체 이용 가능", "예약", "대기공간"]
+services = ["주차 가능 여부", "포장 가능 여부", "장애인 시설 유무", "무한 리필", "단체 이용 가능", "예약", "대기공간",'비건 메뉴 제공',"할랄푸드 제공","글루텐프리 메뉴 제공"]
 
 service_choices = st.multiselect("서비스를 선택해 주세요", services, key="service_choices")
 

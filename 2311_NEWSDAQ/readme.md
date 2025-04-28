@@ -1,5 +1,3 @@
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/362c0099-bc1c-459c-97f4-299ad2159dae/95d8b533-bee8-494b-9266-e962c412b036/Untitled.png)
-
 [프로젝트 소개]
 
 - 주가 파동인 ElliottWave 알고리즘과 NewsSentiment(뉴스 감성분석)을 이용한 주가 상승 예측

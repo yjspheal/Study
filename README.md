@@ -38,11 +38,16 @@
 
 - **프로젝트명**: 온라인 상품 추천 시스템 구현
   - **설명**: 사용자의 행동 데이터를 기반으로 개인화된 상품 추천을 제공하는 웹 애플리케이션 개발
-  - **기술**: Python, Flask, JavaScript, HTML/CSS, MongoDB
+  - **기술**: Python
   - **링크**: [project_github](https://github.com/yourusername/recommendation-system)
 
 ## 기타 목록
 - **BackJoon**
   - **설명**: 백준 코딩테스트 문항 기록
   - **기술**: Python
+  - **링크**: [project_github](https://github.com/yourusername/recommendation-system)
+
+- **Assignments**
+  - **설명**: 대학 과제 기록
+  - **기술**: Python, C++
   - **링크**: [project_github](https://github.com/yourusername/recommendation-system)
